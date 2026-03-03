@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Digital Signage Admin (Internal)
 
-## Getting Started
+Internal admin dashboard to manage **regions**, **devices**, **playlists**, **assets**, and **device → playlist assignments**.
 
-First, run the development server:
+### Tech
+
+- Next.js (App Router) + JavaScript
+- Supabase Auth (email/password) + RLS enforced access
+- Supabase Storage (private bucket `signage-assets`)
+- Tailwind CSS
+- Zod validation + React Hook Form (client forms)
+
+### Environment variables
+
+Create `.env.local`:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_SUPABASE_URL="https://YOUR-PROJECT.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="YOUR_ANON_KEY"
+SUPABASE_SERVICE_ROLE_KEY="YOUR_SERVICE_ROLE_KEY"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`: safe for browser usage.
+- `SUPABASE_SERVICE_ROLE_KEY`: **server-only**. This repo never exposes it to the browser.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Security model
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- All `/dashboard/*` routes require authentication (middleware).
+- `/dashboard` layout additionally checks admin role via `public.is_admin()`:
+  - not signed in → redirect to `/login`
+  - signed in but not admin → redirect to `/not-authorized`
+- Most DB operations use **anon + session** so **RLS enforces access**.
+- **Service role** is used only for privileged operations:
+  - `POST /api/admin/devices`: generate random device key, store **SHA-256 hash** in `devices.device_key_hash`, return plaintext key once
+  - `POST /api/admin/storage/sign-url`: create short-lived signed URLs for private assets previews
 
-## Learn More
+### Database schema assumptions
 
-To learn more about Next.js, take a look at the following resources:
+The app uses these exact existing tables (RLS enabled and admin-only policies via `public.is_admin()`):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `public.profiles`
+- `public.regions`
+- `public.devices`
+- `public.playlists`
+- `public.assets`
+- `public.playlist_items`
+- `public.device_playlist_assignments`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Local dev
 
-## Deploy on Vercel
+```bash
+npm install
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open `http://localhost:3000`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Vercel deploy
+
+Set the same environment variables in Vercel project settings:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (server-side only)
+
