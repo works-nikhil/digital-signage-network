@@ -48,7 +48,7 @@ export default function StatusBadge({ lastSeenAt, isActive = true, thresholdMs =
         online ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
       }`}
     >
-      {online ? 'ONLINE' : 'OFFLINE'}
+      {online ? 'Online' : 'Offline'}
     </span>
   );
 }
