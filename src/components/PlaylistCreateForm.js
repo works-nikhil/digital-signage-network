@@ -72,7 +72,7 @@ export default function PlaylistCreateForm({ regions }) {
           ))}
         </select>
       </div>
-      <label className="inline-flex items-center gap-2">
+      <label className="inline-flex items-center gap-2 mr-3">
         <input type="checkbox" {...register('is_active')} />
         <span>Active</span>
       </label>
