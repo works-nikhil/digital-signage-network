@@ -38,7 +38,7 @@ export async function getFleetCounts() {
  * @param {Object} opts
  * @param {string} [opts.filter] - 'all' | 'online' | 'offline' | 'inactive'
  * @param {number} [opts.page=1]
- * @param {number} [opts.pageSize=25]
+ * @param {number} [opts.pageSize=10]
  */
 export async function getDevicesList(opts = {}) {
   const supabase = await getServerSupabaseClient();

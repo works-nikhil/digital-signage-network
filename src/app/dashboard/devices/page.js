@@ -4,7 +4,7 @@ import StatusBadge from '@/components/StatusBadge';
 import LastSeen from '@/components/LastSeen';
 import DevicesFilter from '@/components/DevicesFilter';
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 10;
 const VALID_FILTERS = ['all', 'online', 'offline', 'inactive'];
 
 export default async function DevicesPage({ searchParams }) {
