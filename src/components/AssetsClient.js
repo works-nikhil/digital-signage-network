@@ -99,7 +99,7 @@ export default function AssetsClient({ initialAssets }) {
                 {a.created_at ? new Date(a.created_at).toLocaleString() : '-'}
               </td>
               <td className="px-3 py-2 text-right">
-                {a.mime_type?.startsWith('image/') && (
+                {(a.mime_type?.startsWith('image/') || a.mime_type?.startsWith('application/pdf')) && (
                   <button
                     type="button"
                     onClick={() => preview(a)}
