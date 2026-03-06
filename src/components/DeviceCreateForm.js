@@ -102,7 +102,7 @@ export default function DeviceCreateForm({ regions }) {
             {...register('install_location')}
           />
         </div>
-        <label className="inline-flex items-center gap-2 text-sm">
+        <label className="inline-flex items-center gap-2 text-sm mr-3">
           <input type="checkbox" {...register('is_active')} />
           <span>Active</span>
         </label>
