@@ -86,3 +86,34 @@ create policy "Admins can update any profile"
 ```
 
 After step 1 and 2 (and 3 if you use RLS), sign out and sign in again, then open `/dashboard`. You should no longer see "You are signed in but do not have admin access."
+
+## 4. Storage: allow admin uploads to `signage-assets`
+
+If uploads to the **signage-assets** bucket fail with **403** / "new row violates row-level security policy", add a storage policy so authenticated admins can insert objects.
+
+Run this in **Supabase Dashboard → SQL Editor**:
+
+```sql
+-- Allow admins to upload (insert) into the signage-assets bucket
+create policy "Admins can upload to signage-assets"
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id = 'signage-assets'
+  and public.is_admin()
+);
+```
+
+Optional: if you want admins to also list/read objects in this bucket (e.g. for UI that lists files), add:
+
+```sql
+create policy "Admins can read signage-assets"
+on storage.objects for select
+to authenticated
+using (
+  bucket_id = 'signage-assets'
+  and public.is_admin()
+);
+```
+
+After running the insert policy, try uploading again from the dashboard Assets page (or your curl with the same auth token).

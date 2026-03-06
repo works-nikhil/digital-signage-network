@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { createBrowserSupabaseClient } from '@/lib/supabase/client';
 
 export default function AssetsClient({ initialAssets }) {
   const [assets, setAssets] = useState(initialAssets || []);
@@ -16,32 +15,17 @@ export default function AssetsClient({ initialAssets }) {
     setUploading(true);
 
     try {
-      const supabase = createBrowserSupabaseClient();
-      const objectPath = `${Date.now()}-${file.name}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('signage-assets')
-        .upload(objectPath, file, { upsert: false });
-
-      if (uploadError) {
-        setError(uploadError.message);
-        return;
-      }
+      const formData = new FormData();
+      formData.append('file', file);
 
       const res = await fetch('/api/assets', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bucket: 'signage-assets',
-          object_path: objectPath,
-          mime_type: file.type || 'application/octet-stream',
-          bytes: file.size,
-        }),
+        body: formData,
       });
 
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(body.error || 'Failed to save asset row');
+        setError(body.error || 'Upload failed');
         return;
       }
 

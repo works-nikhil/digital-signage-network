@@ -18,10 +18,16 @@ Create `.env.local`:
 NEXT_PUBLIC_SUPABASE_URL="https://YOUR-PROJECT.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="YOUR_ANON_KEY"
 SUPABASE_SERVICE_ROLE_KEY="YOUR_SERVICE_ROLE_KEY"
+
+# S3-compatible upload for signage-assets (from Supabase Dashboard → Storage → S3 Connection)
+SUPABASE_S3_ENDPOINT="https://YOUR-PROJECT-REF.storage.supabase.co/storage/v1/s3"
+SUPABASE_S3_ACCESS_KEY_ID="your_access_key_id"
+SUPABASE_S3_SECRET_ACCESS_KEY="your_secret_access_key"
 ```
 
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`: safe for browser usage.
 - `SUPABASE_SERVICE_ROLE_KEY`: **server-only**. This repo never exposes it to the browser.
+- `SUPABASE_S3_*`: **server-only**. Used by `POST /api/assets` to upload files to the `signage-assets` bucket via the S3-compatible API (no storage RLS needed for uploads).
 
 ### Security model
 
@@ -62,4 +68,5 @@ Set the same environment variables in Vercel project settings:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY` (server-side only)
+- `SUPABASE_S3_ENDPOINT`, `SUPABASE_S3_ACCESS_KEY_ID`, `SUPABASE_S3_SECRET_ACCESS_KEY` (for asset uploads)
 
