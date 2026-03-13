@@ -27,7 +27,12 @@ export const playlistSchema = z.object({
   is_active: z.coerce.boolean().default(true),
 });
 
-export const playlistItemSchema = z.object({
+const endsAfterStarts = (data) => {
+  if (!data?.starts_at || !data?.ends_at) return true;
+  return new Date(data.ends_at) > new Date(data.starts_at);
+};
+
+const playlistItemBaseSchema = z.object({
   playlist_id: z.string().uuid(),
   asset_id: z.string().uuid(),
   sort_order: z.coerce.number().int().default(0),
@@ -36,6 +41,32 @@ export const playlistItemSchema = z.object({
   language_code: z.string().optional().nullable(),
   starts_at: z.string().optional().nullable(),
   ends_at: z.string().optional().nullable(),
+});
+
+export const playlistItemSchema = playlistItemBaseSchema.refine(
+  endsAfterStarts,
+  { message: 'ends_at must be after starts_at', path: ['ends_at'] }
+);
+
+export const playlistItemUpdateSchema = z.object({
+  sort_order: z.coerce.number().int().optional(),
+  duration_seconds: z.coerce.number().int().min(1).optional(),
+  is_active: z.coerce.boolean().optional(),
+  language_code: z.string().optional().nullable(),
+  starts_at: z.string().optional().nullable(),
+  ends_at: z.string().optional().nullable(),
+}).refine(
+  endsAfterStarts,
+  { message: 'ends_at must be after starts_at', path: ['ends_at'] }
+);
+
+const playlistItemInsertFields = playlistItemBaseSchema
+  .omit({ playlist_id: true })
+  .refine(endsAfterStarts, { message: 'ends_at must be after starts_at', path: ['ends_at'] });
+
+export const playlistItemsBatchSchema = z.object({
+  playlist_id: z.string().uuid(),
+  items: z.array(playlistItemInsertFields).min(1),
 });
 
 export const assignmentSchema = z.object({

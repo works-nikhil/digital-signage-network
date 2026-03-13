@@ -3,12 +3,13 @@ import { getServerSupabaseClient } from '@/lib/supabase/server';
 import DeviceDetailClient from '@/components/DeviceDetailClient';
 
 export default async function DeviceDetailPage({ params }) {
+  const { id } = await params;
   const supabase = await getServerSupabaseClient();
 
   const { data: device, error: deviceError } = await supabase
     .from('devices')
     .select('*, regions(name)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (!device) {
@@ -18,7 +19,7 @@ export default async function DeviceDetailPage({ params }) {
   const { data: assignments, error: assignmentsError } = await supabase
     .from('device_playlist_assignments')
     .select('*, playlists(name)')
-    .eq('device_id', params.id)
+    .eq('device_id', id)
     .order('priority', { ascending: true });
 
   const { data: playlists } = await supabase

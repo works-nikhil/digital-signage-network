@@ -3,12 +3,13 @@ import { getServerSupabaseClient } from '@/lib/supabase/server';
 import RegionForm from '@/components/RegionForm';
 
 export default async function RegionEditPage({ params }) {
+  const { id } = await params;
   const supabase = await getServerSupabaseClient();
 
   const { data: region, error } = await supabase
     .from('regions')
     .select('*')
-    .eq('id', Number(params.id))
+    .eq('id', Number(id))
     .single();
 
   if (!region) {
