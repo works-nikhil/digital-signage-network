@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { formatDateTime } from '@/lib/formatDate';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { playlistItemUpdateSchema } from '@/lib/validation';
 
@@ -228,9 +229,9 @@ export default function PlaylistItemsClient({ playlistId, assets, initialItems }
                 <td className="px-3 py-2">{i.sort_order}</td>
                 <td className="px-3 py-2">{i.language_code || '–'}</td>
                 <td className="px-3 py-2">
-                  {i.starts_at ? new Date(i.starts_at).toLocaleString() : 'Always'}
+                  {i.starts_at ? formatDateTime(i.starts_at) : 'Always'}
                   {' – '}
-                  {i.ends_at ? new Date(i.ends_at).toLocaleString() : '∞'}
+                  {i.ends_at ? formatDateTime(i.ends_at) : '∞'}
                 </td>
                 <td className="px-3 py-2">{i.is_active ? 'Yes' : 'No'}</td>
                 <td className="px-3 py-2 text-right space-x-2">

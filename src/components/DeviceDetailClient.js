@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { formatDateTime } from '@/lib/formatDate';
 
 function toIsoOrNull(v) {
   if (!v) return null;
@@ -39,9 +40,10 @@ export default function DeviceDetailClient({
 
   async function addOrUpdateAssignment(e) {
     e.preventDefault();
+    const form = e.currentTarget;
     setError(null);
 
-    const fd = new FormData(e.currentTarget);
+    const fd = new FormData(form);
     const payload = {
       device_id: deviceId,
       playlist_id: fd.get('playlist_id'),
@@ -64,7 +66,7 @@ export default function DeviceDetailClient({
     }
 
     setAssignments(body.assignments || assignments);
-    e.currentTarget.reset();
+    form.reset();
   }
 
   async function setAssignmentActive(id, nextActive) {
@@ -142,9 +144,9 @@ export default function DeviceDetailClient({
                   {a.is_active ? 'Yes' : 'No'}
                 </td>
                 <td className="px-3 py-2">
-                  {a.starts_at ? new Date(a.starts_at).toLocaleString() : 'Always'}
+                  {a.starts_at ? formatDateTime(a.starts_at) : 'Always'}
                   {' – '}
-                  {a.ends_at ? new Date(a.ends_at).toLocaleString() : '∞'}
+                  {a.ends_at ? formatDateTime(a.ends_at) : '∞'}
                 </td>
                 <td className="px-3 py-2 text-right space-x-2">
                   <button

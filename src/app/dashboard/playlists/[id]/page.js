@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getServerSupabaseClient } from '@/lib/supabase/server';
+import { formatDateTime } from '@/lib/formatDate';
 import PlaylistEditor from '@/components/PlaylistEditor';
 import PlaylistItemsClient from '@/components/PlaylistItemsClient';
 
@@ -70,8 +71,8 @@ export default async function PlaylistDetailPage({ params }) {
           </span>
         </div>
         <div className="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-500 flex flex-wrap gap-4">
-          <span>Updated: {playlist.updated_at ? new Date(playlist.updated_at).toLocaleString() : '–'}</span>
-          <span>Created: {playlist.created_at ? new Date(playlist.created_at).toLocaleString() : '–'}</span>
+          <span>Updated: {playlist.updated_at ? formatDateTime(playlist.updated_at) : '–'}</span>
+          <span>Created: {playlist.created_at ? formatDateTime(playlist.created_at) : '–'}</span>
         </div>
       </div>
 
