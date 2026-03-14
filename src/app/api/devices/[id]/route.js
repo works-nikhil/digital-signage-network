@@ -7,6 +7,7 @@ const patchSchema = z.object({
 });
 
 export async function PATCH(request, { params }) {
+  const { id } = await params;
   const { ok, status, supabase } = await requireAdmin();
   if (!ok) {
     return NextResponse.json({ error: 'Unauthorized' }, { status });
@@ -21,7 +22,7 @@ export async function PATCH(request, { params }) {
   const { data, error } = await supabase
     .from('devices')
     .update(parsed.data)
-    .eq('id', params.id)
+    .eq('id', id)
     .select('id, is_active')
     .single();
 

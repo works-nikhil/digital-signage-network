@@ -10,6 +10,7 @@ const patchSchema = z.object({
 });
 
 export async function PATCH(request, { params }) {
+  const { id } = await params;
   const { ok, status, supabase } = await requireAdmin();
   if (!ok) {
     return NextResponse.json({ error: 'Unauthorized' }, { status });
@@ -24,7 +25,7 @@ export async function PATCH(request, { params }) {
   const { data, error } = await supabase
     .from('device_playlist_assignments')
     .update(parsed.data)
-    .eq('id', params.id)
+    .eq('id', id)
     .select('id, is_active, priority, starts_at, ends_at')
     .single();
 
@@ -36,6 +37,7 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
+  const { id } = await params;
   const { ok, status, supabase } = await requireAdmin();
   if (!ok) {
     return NextResponse.json({ error: 'Unauthorized' }, { status });
@@ -44,7 +46,7 @@ export async function DELETE(request, { params }) {
   const { error } = await supabase
     .from('device_playlist_assignments')
     .delete()
-    .eq('id', params.id);
+    .eq('id', id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });

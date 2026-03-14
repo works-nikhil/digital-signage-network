@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/auth';
 import { playlistItemUpdateSchema } from '@/lib/validation';
 
 export async function PATCH(request, { params }) {
+  const { id } = await params;
   const { ok, status, supabase } = await requireAdmin();
   if (!ok) {
     return NextResponse.json({ error: 'Unauthorized' }, { status });
@@ -22,7 +23,7 @@ export async function PATCH(request, { params }) {
   const { data: updated, error: updateError } = await supabase
     .from('playlist_items')
     .update(updates)
-    .eq('id', params.id)
+    .eq('id', id)
     .select('*, assets(object_path, mime_type)')
     .single();
 
@@ -47,6 +48,7 @@ export async function PATCH(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
+  const { id } = await params;
   const { ok, status, supabase } = await requireAdmin();
   if (!ok) {
     return NextResponse.json({ error: 'Unauthorized' }, { status });
@@ -55,7 +57,7 @@ export async function DELETE(request, { params }) {
   const { data: existing, error: fetchError } = await supabase
     .from('playlist_items')
     .select('id, playlist_id')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (fetchError || !existing) {
@@ -65,7 +67,7 @@ export async function DELETE(request, { params }) {
   const { error: deleteError } = await supabase
     .from('playlist_items')
     .delete()
-    .eq('id', params.id);
+    .eq('id', id);
 
   if (deleteError) {
     return NextResponse.json({ error: deleteError.message }, { status: 400 });
