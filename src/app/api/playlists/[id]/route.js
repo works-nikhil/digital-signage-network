@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/auth';
 import { playlistSchema } from '@/lib/validation';
 
 export async function PUT(request, { params }) {
+  const { id } = await params;
   const { ok, status, supabase } = await requireAdmin();
   if (!ok) {
     return NextResponse.json({ error: 'Unauthorized' }, { status });
@@ -23,7 +24,7 @@ export async function PUT(request, { params }) {
   const { data, error } = await supabase
     .from('playlists')
     .update(update)
-    .eq('id', params.id)
+    .eq('id', id)
     .select('*')
     .single();
 

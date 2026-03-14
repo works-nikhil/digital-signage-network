@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/auth';
 import { regionSchema } from '@/lib/validation';
 
 export async function PUT(request, { params }) {
+  const { id } = await params;
   const { ok, status, supabase } = await requireAdmin();
   if (!ok) {
     return NextResponse.json({ error: 'Unauthorized' }, { status });
@@ -17,7 +18,7 @@ export async function PUT(request, { params }) {
   const { data, error } = await supabase
     .from('regions')
     .update(parsed.data)
-    .eq('id', Number(params.id))
+    .eq('id', Number(id))
     .select('*')
     .single();
 

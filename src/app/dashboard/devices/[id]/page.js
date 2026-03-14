@@ -1,14 +1,16 @@
 import { notFound } from 'next/navigation';
 import { getServerSupabaseClient } from '@/lib/supabase/server';
+import { formatDateTime } from '@/lib/formatDate';
 import DeviceDetailClient from '@/components/DeviceDetailClient';
 
 export default async function DeviceDetailPage({ params }) {
+  const { id } = await params;
   const supabase = await getServerSupabaseClient();
 
   const { data: device, error: deviceError } = await supabase
     .from('devices')
     .select('*, regions(name)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (!device) {
@@ -18,7 +20,7 @@ export default async function DeviceDetailPage({ params }) {
   const { data: assignments, error: assignmentsError } = await supabase
     .from('device_playlist_assignments')
     .select('*, playlists(name)')
-    .eq('device_id', params.id)
+    .eq('device_id', id)
     .order('priority', { ascending: true });
 
   const { data: playlists } = await supabase
@@ -45,7 +47,7 @@ export default async function DeviceDetailPage({ params }) {
       <div className="bg-white rounded shadow p-4 text-sm space-y-1">
         <p>
           <span className="font-medium">Last seen:</span>{' '}
-          {device.last_seen_at ? new Date(device.last_seen_at).toLocaleString() : 'Never'}
+          {device.last_seen_at ? formatDateTime(device.last_seen_at) : 'Never'}
         </p>
         <p>
           <span className="font-medium">Last IP:</span> {device.last_ip || '-'}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { formatDateTime } from '@/lib/formatDate';
 
 export default function AssetsClient({ initialAssets }) {
   const [assets, setAssets] = useState(initialAssets || []);
@@ -96,7 +97,7 @@ export default function AssetsClient({ initialAssets }) {
               <td className="px-3 py-2">{a.mime_type}</td>
               <td className="px-3 py-2">{a.bytes}</td>
               <td className="px-3 py-2">
-                {a.created_at ? new Date(a.created_at).toLocaleString() : '-'}
+                {a.created_at ? formatDateTime(a.created_at) : '-'}
               </td>
               <td className="px-3 py-2 text-right">
                 {(a.mime_type?.startsWith('image/') || a.mime_type?.startsWith('application/pdf')) && (
