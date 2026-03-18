@@ -34,7 +34,7 @@ export async function getFleetCounts() {
 }
 
 /**
- * Server-only. Paginated device list; offline-first (oldest last_seen first), then by name.
+ * Server-only. Paginated device list with active playlist assignment.
  * @param {Object} opts
  * @param {string} [opts.filter] - 'all' | 'online' | 'offline' | 'inactive'
  * @param {number} [opts.page=1]
@@ -49,9 +49,10 @@ export async function getDevicesList(opts = {}) {
 
   let query = supabase
     .from('devices')
-    .select('id, name, region_id, is_active, last_seen_at, player_version, last_error, regions(name)', {
-      count: 'exact',
-    });
+    .select(
+      'id, name, region_id, is_active, last_seen_at, player_version, last_error, regions(name), device_playlist_assignments(playlist_id, is_active, playlists(name))',
+      { count: 'exact' }
+    );
 
   if (filter === 'online') {
     query = query.eq('is_active', true).gte('last_seen_at', threshold);
