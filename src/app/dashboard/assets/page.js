@@ -10,9 +10,14 @@ export default async function AssetsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-xl font-semibold">Assets</h1>
+      <div>
+        <h1 className="text-xl font-semibold text-gray-900">Assets</h1>
+        <p className="text-sm text-gray-500 mt-0.5">
+          {assets?.length ?? 0} file{assets?.length !== 1 ? 's' : ''} in library
+        </p>
+      </div>
       {error && (
-        <div className="rounded bg-red-50 text-red-700 px-3 py-2 text-sm">
+        <div className="rounded bg-red-50 text-red-700 px-3 py-2 text-sm border border-red-100">
           {error.message}
         </div>
       )}
@@ -20,4 +25,3 @@ export default async function AssetsPage() {
     </div>
   );
 }
-
